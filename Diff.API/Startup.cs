@@ -10,6 +10,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using AutoMapper;
+using EasyNetQ;
+using Diff.Data;
+using Microsoft.EntityFrameworkCore;
+using Diff.Integration.Config;
 
 namespace Diff.API
 {
@@ -25,7 +30,12 @@ namespace Diff.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddCustomDbContext(Configuration)
+                .AddCustomConfiguration(Configuration)
+                .AddCustomMvc()
+                .AddAutoMapper()
+                .AddEventBus(Configuration);
+                //.AddScoped<IDiffAnalysisRepository, DiffAnalysisRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,7 +52,60 @@ namespace Diff.API
             }
 
             app.UseHttpsRedirection();
+            app.UseCors("CorsPolicy");
             app.UseMvc();
+        }
+    }
+
+    static class CustomExtensionsMethods
+    {
+        public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<DataContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("SqlServerConnection"));
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSingleton<IBus>(sp =>
+            {
+                var settings = sp.GetService<IOptions<EventBusConfig>>();
+                var serviceBus = RabbitHutch.CreateBus(settings.Value.RabbitMqConnectionString);
+
+                return serviceBus;
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddOptions();
+            services.Configure<EventBusConfig>(configuration.GetSection("EventBusConfig"));
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomMvc(this IServiceCollection services)
+        {
+            // Add framework services.
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
+
+            return services;
         }
     }
 }
