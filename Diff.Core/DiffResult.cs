@@ -9,18 +9,15 @@ namespace Diff.Core
     {
         public byte[] Left { get; private set; }
         public byte[] Right { get; private set; }
+        public IList<IDiffSegment> Segments { get; private set; }
+
         public bool AreEqualSize => Left?.Length == Right?.Length;
 
-        public DiffResult(byte[] left, byte[] right)
+        public DiffResult(byte[] left, byte[] right, IList<IDiffSegment> segments)
         {
             Left = left;
             Right = right;
-        }
-
-        public IEnumerable<IDiffSegment> Segments
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            Segments = segments;
         }
     }
 }

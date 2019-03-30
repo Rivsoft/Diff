@@ -6,7 +6,7 @@ namespace Diff.Core.Interfaces
 {
     public interface IDiffSegment
     {
-        long Offset { get; }
-        long Length { get; }
+        int Offset { get; }
+        int Length { get; }
     }
 }

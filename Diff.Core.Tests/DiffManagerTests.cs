@@ -36,6 +36,15 @@ namespace Diff.Core.Tests
         }
 
         [TestMethod]
+        public void Should_ThrowException_When_NullBothArguments()
+        {
+            byte[] left = null;
+            byte[] right = null;
+
+            Assert.ThrowsException<ArgumentNullException>(() => _diffManager.GenerateDiff(left, right));
+        }
+
+        [TestMethod]
         public void Should_ThrowException_When_BothRequiredArgumentsAreEmpty()
         {
             byte[] left = new byte[] { };
@@ -45,7 +54,7 @@ namespace Diff.Core.Tests
         }
 
         [TestMethod]
-        public void Should_ReturnAreEqualSizeTrue_When_DiffArgsAreEqual()
+        public void Should_ReturnAreEqualSizeTrue_When_ArgumentsAreEqual()
         {
             var left = GetTestSample();
             var right = GetTestSample();
@@ -56,7 +65,7 @@ namespace Diff.Core.Tests
         }
 
         [TestMethod]
-        public void Should_ReturnAreEqualSizeTrue_When_DiffArgsAreSameSizeButDifferentContent()
+        public void Should_ReturnAreEqualSizeTrue_When_ArgumentsAreSameSizeButDifferentContent()
         {
             var left = GetTestSample("TestA");
             var right = GetTestSample("TestB");
@@ -67,7 +76,7 @@ namespace Diff.Core.Tests
         }
 
         [TestMethod]
-        public void Should_ReturnAreEqualSizeFalse_When_DiffArgsAreDifferentSize()
+        public void Should_ReturnAreEqualSizeFalse_When_ArgumentsAreDifferentSize()
         {
             var left = GetTestSample("TestA");
             var right = GetTestSample("TestLength");
@@ -75,6 +84,66 @@ namespace Diff.Core.Tests
             var result = _diffManager.GenerateDiff(left, right);
 
             Assert.IsFalse(result.AreEqualSize);
+        }
+
+        [TestMethod]
+        public void Should_ReturnOneDiffSegment_When_ArgumentsAreDifferentInOneSegment()
+        {
+            var left = GetTestSample("TestA");
+            var right = GetTestSample("TestB");
+
+            var result = _diffManager.GenerateDiff(left, right);
+
+            Assert.IsTrue(result.Segments.Count == 1);
+            Assert.IsTrue(result.Segments[0].Offset == 4);
+            Assert.IsTrue(result.Segments[0].Length == 1);
+        }
+
+        [TestMethod]
+        public void Should_ReturnOneDiffSegment_When_ArgumentsAreDifferentInOneSegmentCoveringEntireLength()
+        {
+            var left = GetTestSample("AAAAA");
+            var right = GetTestSample("BBBBB");
+
+            var result = _diffManager.GenerateDiff(left, right);
+
+            Assert.IsTrue(result.Segments.Count == 1);
+            Assert.IsTrue(result.Segments[0].Offset == 0);
+            Assert.IsTrue(result.Segments[0].Length == 5);
+        }
+
+        [TestMethod]
+        public void Should_ReturnThreeDiffSegment_When_ArgumentsAreDifferentInThreeSingleByteSegmentsAtStartMiddleAndEnd()
+        {
+            var left = GetTestSample("AFirstANameA");
+            var right = GetTestSample("BFirstBNameB");
+
+            var result = _diffManager.GenerateDiff(left, right);
+
+            Assert.IsTrue(result.Segments.Count == 3);
+            Assert.IsTrue(result.Segments[0].Offset == 0);
+            Assert.IsTrue(result.Segments[0].Length == 1);
+            Assert.IsTrue(result.Segments[1].Offset == 6);
+            Assert.IsTrue(result.Segments[1].Length == 1);
+            Assert.IsTrue(result.Segments[2].Offset == 11);
+            Assert.IsTrue(result.Segments[2].Length == 1);
+        }
+
+        [TestMethod]
+        public void Should_ReturnThreeDiffSegment_When_ArgumentsAreDifferentInThreeMultipleByteSegmentsAtStartMiddleAndEnd()
+        {
+            var left = GetTestSample("AAAFirstAANameAAAAA");
+            var right = GetTestSample("BBBFirstBBNameBBBBB");
+
+            var result = _diffManager.GenerateDiff(left, right);
+
+            Assert.IsTrue(result.Segments.Count == 3);
+            Assert.IsTrue(result.Segments[0].Offset == 0);
+            Assert.IsTrue(result.Segments[0].Length == 3);
+            Assert.IsTrue(result.Segments[1].Offset == 8);
+            Assert.IsTrue(result.Segments[1].Length == 2);
+            Assert.IsTrue(result.Segments[2].Offset == 14);
+            Assert.IsTrue(result.Segments[2].Length == 5);
         }
 
         private byte[] GetTestSample(string sample = "TestSample")
