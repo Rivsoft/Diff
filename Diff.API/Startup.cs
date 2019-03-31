@@ -15,6 +15,7 @@ using EasyNetQ;
 using Diff.Data;
 using Microsoft.EntityFrameworkCore;
 using Diff.Integration.Config;
+using Diff.Data.Repositories;
 
 namespace Diff.API
 {
@@ -34,8 +35,8 @@ namespace Diff.API
                 .AddCustomConfiguration(Configuration)
                 .AddCustomMvc()
                 .AddAutoMapper()
-                .AddEventBus(Configuration);
-                //.AddScoped<IDiffAnalysisRepository, DiffAnalysisRepository>();
+                .AddEventBus(Configuration)
+                .AddScoped<IDiffAnalysisRepository, DiffAnalysisRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

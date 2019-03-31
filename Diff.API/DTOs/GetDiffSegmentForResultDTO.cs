@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Diff.Data.Models
+namespace Diff.API.DTOs
 {
-    public class DiffSegment
+    public class GetDiffSegmentForResultDTO
     {
-        public Guid Id { get; set; }
         public int Offset { get; set; }
         public int Length { get; set; }
     }
