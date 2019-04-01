@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Diff.Data.Migrations
 {
-    public partial class InitialDatabase : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,7 @@ namespace Diff.Data.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Left = table.Column<byte[]>(nullable: true),
                     Right = table.Column<byte[]>(nullable: true),
-                    Analized = table.Column<bool>(nullable: false)
+                    Analyzed = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

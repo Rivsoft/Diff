@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Diff.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20190331134757_InitialDatabase")]
-    partial class InitialDatabase
+    [Migration("20190401182038_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,7 +26,7 @@ namespace Diff.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("Analized");
+                    b.Property<bool>("Analyzed");
 
                     b.Property<byte[]>("Left");
 

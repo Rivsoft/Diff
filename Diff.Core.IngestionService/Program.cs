@@ -41,7 +41,7 @@ namespace Diff.Core.IngestionService
                 })
                 .ConfigureLogging((hostContext, logging) =>
                 {
-                    logging.AddConfiguration(hostContext.Configuration.GetSection("Logging"));
+                    //logging.AddConfiguration(hostContext.Configuration.GetSection("Logging"));
                     logging.AddConsole();
                 });
 

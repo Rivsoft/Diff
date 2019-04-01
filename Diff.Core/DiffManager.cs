@@ -23,7 +23,7 @@ namespace Diff.Core
             return new DiffResult(left, right, segments);
         }
 
-        private IList<IDiffSegment> CompareArrays(byte[] left, byte[] right)
+        private List<IDiffSegment> CompareArrays(byte[] left, byte[] right)
         {
             var segments = new List<IDiffSegment>();
             int offset = -1, length = 0;

@@ -24,7 +24,7 @@ namespace Diff.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("Analized");
+                    b.Property<bool>("Analyzed");
 
                     b.Property<byte[]>("Left");
 

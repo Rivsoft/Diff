@@ -9,6 +9,6 @@ namespace Diff.Core.Interfaces
         byte[] Left { get; }
         byte[] Right { get; }
         bool AreEqualSize { get; }
-        IList<IDiffSegment> Segments { get; }        
+        List<IDiffSegment> Segments { get; }        
     }
 }
