@@ -3,7 +3,7 @@ using AutoMapper;
 using Diff.API.DTOs;
 using Diff.Data.Models;
 
-namespace AlmostSorted.API.Helpers
+namespace Diff.API.Helpers
 {
     public class AutoMapperProfiles : Profile
     {

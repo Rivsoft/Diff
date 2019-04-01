@@ -14,6 +14,6 @@ namespace Diff.Data.Models
         public byte[] Right { get; set; }
         //public bool AreEqualSize { get; set; }
         public ICollection<DiffSegment> Segments { get; } = new List<DiffSegment>();
-        public bool Analized { get; set; }
+        public bool Analyzed { get; set; }
     }
 }

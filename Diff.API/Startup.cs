@@ -16,6 +16,7 @@ using Diff.Data;
 using Microsoft.EntityFrameworkCore;
 using Diff.Integration.Config;
 using Diff.Data.Repositories;
+using Diff.API.Helpers;
 
 namespace Diff.API
 {
@@ -52,7 +53,7 @@ namespace Diff.API
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseCors("CorsPolicy");
             app.UseMvc();
         }
@@ -94,7 +95,8 @@ namespace Diff.API
         public static IServiceCollection AddCustomMvc(this IServiceCollection services)
         {
             // Add framework services.
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(o => o.InputFormatters.Insert(0, new RawRequestBodyFormatter()))
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddCors(options =>
             {

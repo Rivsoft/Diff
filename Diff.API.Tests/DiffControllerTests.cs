@@ -40,7 +40,7 @@ namespace Diff.API.Tests
             // Mock the Url property of the controller
             var mockUrlHelper = new Mock<IUrlHelper>();
             mockUrlHelper.Setup(x => x.RouteUrl(It.IsAny<UrlRouteContext>()))
-                .Returns("/api/v1/route");
+                .Returns("/api/v1/diff/route");
 
             // Initialize the diff controller used on all tests
             _diffController = new DiffController(mockedBus.Object, mockedMapper.Object, mockedDiffRepo.Object)
@@ -58,7 +58,7 @@ namespace Diff.API.Tests
                     return new GetDiffAnalysisForResultDTO
                     {
                         Id = source.Id,
-                        Analized = source.Analized,
+                        Analized = source.Analyzed,
                         Left = source.Left,
                         Right = source.Right,
                         Segments = source.Segments.Select(x => new GetDiffSegmentForResultDTO { Length = x.Length, Offset = x.Offset }).ToArray()
@@ -75,14 +75,14 @@ namespace Diff.API.Tests
                 new DiffAnalysis
                 {
                     Id = Guid.Parse("50847358-8DDE-47E1-950D-ED04BB9720CA"),
-                    Analized = false,
+                    Analyzed = false,
                     Left = null,
                     Right = null
                 },
                 new DiffAnalysis
                 {
                     Id = Guid.Parse("20D4DC4F-2805-4D47-B658-D19BFF5C4A43"),
-                    Analized = false,
+                    Analyzed = false,
                     Left = null,
                     Right = null
                 },
@@ -125,7 +125,7 @@ namespace Diff.API.Tests
         [TestMethod]
         public async Task GetDiffResult_Should_ReturnNotFound_When_GuidIsEmpty()
         {
-            var result = await _diffController.GetDiffResult(Guid.Empty) as NotFoundObjectResult;
+            var result = await _diffController.GetDiffResult(Guid.Empty) as NotFoundResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(404, result.StatusCode);

@@ -29,40 +29,31 @@ namespace Diff.API.Controllers
         }
 
         [HttpPost("{id}/left")]
-        public async Task<IActionResult> AddLeft(Guid id, string input)
+        public async Task<IActionResult> AddLeft(Guid id, [FromBody] string input)
+        {
+            return await AddInputArgument(id, input, true);
+        }
+
+        [HttpPost("{id}/right")]
+        public async Task<IActionResult> AddRight(Guid id, [FromBody] string input)
+        {
+            return await AddInputArgument(id, input, false);
+        }
+
+        private async Task<IActionResult> AddInputArgument(Guid id, string input, bool isLeftArgument)
         {
             byte[] inputArray = Base64Helper.ConvertBase64String(input);
 
             if (id == Guid.Empty || inputArray == null)
                 return BadRequest();
 
-            var message = new AddDiffInputMessage { Id = id, Input = inputArray, IsLeft = true };
+            var message = new AddDiffInputMessage { Id = id, Input = inputArray, IsLeft = isLeftArgument };
 
             await _serviceBus.PublishAsync(message);
 
             var uri = Url.RouteUrl("GetDiffResult", new { id });
 
-            return Accepted(uri, new
-            {
-                Id = id,
-                Uri = uri
-            });
-        }
-
-        [HttpPost("{id}/right")]
-        public async Task<IActionResult> AddRight(Guid id, AddDiffInputDTO input)
-        {
-            var message = new AddDiffInputMessage { Id = id, Input = input.Input, IsLeft = false };
-
-            await _serviceBus.PublishAsync(message);
-
-            var uri = Url.RouteUrl("GetDiffResult", new { id });
-
-            return Created(uri, new
-            {
-                Id = id,
-                Uri = uri
-            });
+            return Accepted(uri);
         }
 
         [HttpGet("{id}", Name = "GetDiffResult")]
@@ -78,7 +69,7 @@ namespace Diff.API.Controllers
             }
             else // analysis doesnt exist
             {
-                return NotFound("Diff analysis doesnt exist.");
+                return NotFound();
             }
         }
     }
