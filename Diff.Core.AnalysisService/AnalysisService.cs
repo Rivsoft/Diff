@@ -1,7 +1,6 @@
-﻿using Diff.Core.Interfaces;
-using Diff.Data.Models;
+﻿using Diff.Core.Integration.Messages;
+using Diff.Core.Interfaces;
 using Diff.Data.Repositories;
-using Diff.Integration.Messages;
 using EasyNetQ;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace Diff.Core.AnalysisService
 {
@@ -51,21 +49,21 @@ namespace Diff.Core.AnalysisService
             using (var scope = _scopeFactory.CreateScope())
             {
                 var analysisRepo = scope.ServiceProvider.GetRequiredService<IDiffAnalysisRepository>();
-                var analizer = scope.ServiceProvider.GetRequiredService<IDiffGenerator>();
+                var analizer = scope.ServiceProvider.GetRequiredService<IDiffAnalyzer>();
 
                 var analysis = await analysisRepo.GetAnalysis(input.Id);
 
                 //If analysis doesnt exists in the DB
                 if (analysis == null)
                 {
-                    _logger.LogInformation($"Analysis Not Found: {input.Id}");
+                    _logger.LogWarning($"Analysis Not Found: {input.Id}");
                     return;
                 }
 
                 // if analysis already analyzed we discard the input
                 if (analysis.Analyzed)
                 {
-                    _logger.LogInformation($"Analysis already analyzed: {input.Id}");
+                    _logger.LogWarning($"Analysis already processed: {input.Id}");
                     return;
                 }
 
@@ -76,6 +74,8 @@ namespace Diff.Core.AnalysisService
 
                     // Generate the diff for this analysis
                     var result = analizer.GenerateDiff(analysis.Left, analysis.Right);
+
+                    _logger.LogInformation($"Found {result.Segments.Count} diff segments");
 
                     // Map analized Diff Segments to the existing Analysis DB model
                     result.Segments.ForEach(s => 

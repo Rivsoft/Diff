@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Diff.Core
 {
-    public class DiffManager : IDiffGenerator
+    public class DiffAnalyzer : IDiffAnalyzer
     {
         public IDiffResult GenerateDiff(byte[] left, byte[] right)
         {
@@ -15,7 +15,7 @@ namespace Diff.Core
                 throw new ArgumentNullException("right");
 
             if (left.Length != right.Length)
-                return new DiffResult(left, right, null);
+                return new DiffResult(left, right);
 
             //Return diff segments between both arrays
             var segments = CompareArrays(left, right);

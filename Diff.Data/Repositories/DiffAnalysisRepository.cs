@@ -32,7 +32,9 @@ namespace Diff.Data.Repositories
         /// <returns></returns>
         public async Task<DiffAnalysis> GetAnalysis(Guid id)
         {
-            var result = await _context.DiffAnalysis.FirstOrDefaultAsync(a => a.Id == id);
+            var result = await _context.DiffAnalysis
+                .Include(analysis => analysis.Segments)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
             return result;
         }

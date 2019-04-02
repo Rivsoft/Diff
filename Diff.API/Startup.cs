@@ -14,7 +14,7 @@ using AutoMapper;
 using EasyNetQ;
 using Diff.Data;
 using Microsoft.EntityFrameworkCore;
-using Diff.Integration.Config;
+using Diff.Core.Integration.Config;
 using Diff.Data.Repositories;
 using Diff.API.Helpers;
 

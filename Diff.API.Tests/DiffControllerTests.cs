@@ -1,6 +1,7 @@
 using AutoMapper;
 using Diff.API.Controllers;
 using Diff.API.DTOs;
+using Diff.API.Helpers;
 using Diff.Data.Models;
 using Diff.Data.Repositories;
 using EasyNetQ;
@@ -58,9 +59,8 @@ namespace Diff.API.Tests
                     return new GetDiffAnalysisForResultDTO
                     {
                         Id = source.Id,
-                        Analized = source.Analyzed,
-                        Left = source.Left,
-                        Right = source.Right,
+                        AreEqual = source.Left.Length == source.Right.Length && source.Segments.Count == 0,
+                        AreEqualSize = source.Left.Length == source.Right.Length,
                         Segments = source.Segments.Select(x => new GetDiffSegmentForResultDTO { Length = x.Length, Offset = x.Offset }).ToArray()
                     };
                 });
@@ -82,9 +82,9 @@ namespace Diff.API.Tests
                 new DiffAnalysis
                 {
                     Id = Guid.Parse("20D4DC4F-2805-4D47-B658-D19BFF5C4A43"),
-                    Analyzed = false,
-                    Left = null,
-                    Right = null
+                    Analyzed = true,
+                    Left = Base64Helper.ConvertBase64String("ew0KICAgICJuYW1lIjogIkpvaG4iLA0KICAgICJhZ2UiOiAzMCwNCiAgICAiY2FyIjogbnVsbA0KfQ=="),
+                    Right = Base64Helper.ConvertBase64String("ew0KICAgICJuYW1lIjogIkpvaG4iLA0KICAgICJhZ2UiOiAzMCwNCiAgICAiY2FyIjogbnVsbA0KfQ==")
                 },
             };
         }

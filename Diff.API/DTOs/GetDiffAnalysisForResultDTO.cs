@@ -8,9 +8,8 @@ namespace Diff.API.DTOs
     public class GetDiffAnalysisForResultDTO
     {
         public Guid Id { get; set; }
-        public byte[] Left { get; set; }
-        public byte[] Right { get; set; }
+        public bool AreEqual { get; set; }
+        public bool AreEqualSize { get; set; }
         public GetDiffSegmentForResultDTO[] Segments { get; set; }
-        public bool Analized { get; set; }
     }
 }

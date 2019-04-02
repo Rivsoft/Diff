@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Diff.API.DTOs;
 using Diff.API.Helpers;
+using Diff.Core.Integration.Messages;
 using Diff.Data.Repositories;
-using Diff.Integration.Messages;
 using EasyNetQ;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace Diff.API.Controllers
 {

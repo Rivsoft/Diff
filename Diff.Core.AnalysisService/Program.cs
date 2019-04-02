@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using Diff.Core.Integration.Config;
 using Diff.Core.Interfaces;
 using Diff.Data;
 using Diff.Data.Repositories;
-using Diff.Integration.Config;
 using EasyNetQ;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +23,7 @@ namespace Diff.Core.AnalysisService
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
                     config.SetBasePath(Directory.GetCurrentDirectory());
-                    config.AddJsonFile("appsettings.json", optional: true);
+                    config.AddJsonFile("appsettings.json", false, true);
                     config.AddEnvironmentVariables();
 
                     if (args != null)
@@ -38,7 +38,7 @@ namespace Diff.Core.AnalysisService
                         .AddAutoMapper()
                         .AddEventBus(hostContext.Configuration)
                         .AddScoped<IDiffAnalysisRepository, DiffAnalysisRepository>()
-                        .AddScoped<IDiffGenerator, DiffManager>()
+                        .AddScoped<IDiffAnalyzer, DiffAnalyzer>()
                         .AddSingleton<IHostedService, AnalysisService>();
                 })
                 .ConfigureLogging((hostContext, logging) =>

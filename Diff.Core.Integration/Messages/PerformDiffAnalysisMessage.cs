@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Diff.Integration.Messages
+namespace Diff.Core.Integration.Messages
 {
     public class PerformDiffAnalysisMessage
     {

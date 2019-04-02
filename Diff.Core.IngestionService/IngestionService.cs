@@ -1,6 +1,6 @@
-﻿using Diff.Data.Models;
+﻿using Diff.Core.Integration.Messages;
+using Diff.Data.Models;
 using Diff.Data.Repositories;
-using Diff.Integration.Messages;
 using EasyNetQ;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

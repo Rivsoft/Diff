@@ -16,7 +16,6 @@
   <ItemGroup>
     <Content Include="appsettings.Development.json">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="appsettings.json">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -37,10 +36,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Diff.Core.Integration\Diff.Core.Integration.csproj" />
     <ProjectReference Include="..\Diff.Core.Interfaces\Diff.Core.Interfaces.csproj" />
     <ProjectReference Include="..\Diff.Core\Diff.Core.csproj" />
     <ProjectReference Include="..\Diff.Data\Diff.Data.csproj" />
-    <ProjectReference Include="..\Diff.Integration\Diff.Integration.csproj" />
   </ItemGroup>
 
   <ItemGroup>

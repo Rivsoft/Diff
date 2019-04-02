@@ -37,8 +37,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Diff.Core.Integration\Diff.Core.Integration.csproj" />
     <ProjectReference Include="..\Diff.Data\Diff.Data.csproj" />
-    <ProjectReference Include="..\Diff.Integration\Diff.Integration.csproj" />
   </ItemGroup>
 
   <ItemGroup>

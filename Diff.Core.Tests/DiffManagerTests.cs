@@ -8,13 +8,13 @@ namespace Diff.Core.Tests
     public class DiffManagerTests
     {
         //Global diff manager to be used on all tests
-        private DiffManager _diffManager;
+        private DiffAnalyzer _diffManager;
 
         [TestInitialize]
         public void TestInitialize()
         {
             //Initialize the global diff manager used on all tests
-            _diffManager = new DiffManager();
+            _diffManager = new DiffAnalyzer();
         }
 
         [TestMethod]
