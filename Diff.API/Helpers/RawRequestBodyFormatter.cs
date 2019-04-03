@@ -5,74 +5,36 @@ using System.Linq;
 using Microsoft.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.IO;
+using System.Text;
 
 namespace Diff.API.Helpers
 {
     /// <summary>
-    /// Formatter that allows content of type text/plain and application/octet stream
-    /// or no content type to be parsed to raw data. Allows for a single input parameter
-    /// in the form of:
-    /// 
-    /// public string RawString([FromBody] string data)
-    /// public byte[] RawData([FromBody] byte[] data)
+    /// Input Formatter allowing for text/plain content types
     /// </summary>
-    public class RawRequestBodyFormatter : InputFormatter
+    public class RawRequestBodyFormatter : TextInputFormatter
     {
         public RawRequestBodyFormatter()
         {
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/plain"));
-            SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/octet-stream"));
+
+            SupportedEncodings.Add(Encoding.UTF8);
+            SupportedEncodings.Add(Encoding.Unicode);
         }
 
-        /// <summary>
-        /// Allow text/plain, application/octet-stream and no content type to
-        /// be processed
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public override Boolean CanRead(InputFormatterContext context)
+        protected override bool CanReadType(Type type)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
-
-            var contentType = context.HttpContext.Request.ContentType;
-            if (string.IsNullOrEmpty(contentType) || contentType == "text/plain" ||
-                contentType == "application/octet-stream")
-                return true;
-
-            return false;
+            return type == typeof(string);
         }
 
-        /// <summary>
-        /// Handle text/plain or no content type for string results
-        /// Handle application/octet-stream for byte[] results
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public override async Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
+        public override async Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context, Encoding encoding)
         {
-            var request = context.HttpContext.Request;
-            var contentType = context.HttpContext.Request.ContentType;
-
-
-            if (string.IsNullOrEmpty(contentType) || contentType == "text/plain")
+            string data = null;
+            using (var streamReader = context.ReaderFactory(context.HttpContext.Request.Body, encoding))
             {
-                using (var reader = new StreamReader(request.Body))
-                {
-                    var content = await reader.ReadToEndAsync();
-                    return await InputFormatterResult.SuccessAsync(content);
-                }
+                data = await streamReader.ReadToEndAsync();
             }
-            if (contentType == "application/octet-stream")
-            {
-                using (var ms = new MemoryStream(2048))
-                {
-                    await request.Body.CopyToAsync(ms);
-                    var content = ms.ToArray();
-                    return await InputFormatterResult.SuccessAsync(content);
-                }
-            }
-
-            return await InputFormatterResult.FailureAsync();
+            return InputFormatterResult.Success(data);
         }
     }
 }

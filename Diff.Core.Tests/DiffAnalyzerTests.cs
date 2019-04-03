@@ -5,16 +5,16 @@ using System.Text;
 namespace Diff.Core.Tests
 {
     [TestClass]
-    public class DiffManagerTests
+    public class DiffAnalyzerTests
     {
         //Global diff manager to be used on all tests
-        private DiffAnalyzer _diffManager;
+        private DiffAnalyzer _diffAnalyzer;
 
         [TestInitialize]
         public void TestInitialize()
         {
             //Initialize the global diff manager used on all tests
-            _diffManager = new DiffAnalyzer();
+            _diffAnalyzer = new DiffAnalyzer();
         }
 
         [TestMethod]
@@ -23,7 +23,7 @@ namespace Diff.Core.Tests
             byte[] left = null;
             byte[] right = GetTestSample();
 
-            Assert.ThrowsException<ArgumentNullException>(() => _diffManager.GenerateDiff(left, right));
+            Assert.ThrowsException<ArgumentNullException>(() => _diffAnalyzer.GenerateDiff(left, right));
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ namespace Diff.Core.Tests
             byte[] left = GetTestSample();
             byte[] right = null;
 
-            Assert.ThrowsException<ArgumentNullException>(() => _diffManager.GenerateDiff(left, right));
+            Assert.ThrowsException<ArgumentNullException>(() => _diffAnalyzer.GenerateDiff(left, right));
         }
 
         [TestMethod]
@@ -41,7 +41,7 @@ namespace Diff.Core.Tests
             byte[] left = null;
             byte[] right = null;
 
-            Assert.ThrowsException<ArgumentNullException>(() => _diffManager.GenerateDiff(left, right));
+            Assert.ThrowsException<ArgumentNullException>(() => _diffAnalyzer.GenerateDiff(left, right));
         }
 
         [TestMethod]
@@ -50,7 +50,7 @@ namespace Diff.Core.Tests
             byte[] left = new byte[] { };
             byte[] right = new byte[] { };
 
-            Assert.ThrowsException<ArgumentNullException>(() => _diffManager.GenerateDiff(left, right));
+            Assert.ThrowsException<ArgumentNullException>(() => _diffAnalyzer.GenerateDiff(left, right));
         }
 
         [TestMethod]
@@ -59,7 +59,7 @@ namespace Diff.Core.Tests
             var left = GetTestSample();
             var right = GetTestSample();
 
-            var result = _diffManager.GenerateDiff(left, right);
+            var result = _diffAnalyzer.GenerateDiff(left, right);
 
             Assert.IsTrue(result.AreEqualSize);
         }
@@ -70,7 +70,7 @@ namespace Diff.Core.Tests
             var left = GetTestSample("TestA");
             var right = GetTestSample("TestB");
 
-            var result = _diffManager.GenerateDiff(left, right);
+            var result = _diffAnalyzer.GenerateDiff(left, right);
 
             Assert.IsTrue(result.AreEqualSize);
         }
@@ -81,7 +81,7 @@ namespace Diff.Core.Tests
             var left = GetTestSample("TestA");
             var right = GetTestSample("TestLength");
 
-            var result = _diffManager.GenerateDiff(left, right);
+            var result = _diffAnalyzer.GenerateDiff(left, right);
 
             Assert.IsFalse(result.AreEqualSize);
         }
@@ -92,7 +92,7 @@ namespace Diff.Core.Tests
             var left = GetTestSample("TestA");
             var right = GetTestSample("TestB");
 
-            var result = _diffManager.GenerateDiff(left, right);
+            var result = _diffAnalyzer.GenerateDiff(left, right);
 
             Assert.IsTrue(result.Segments.Count == 1);
             Assert.IsTrue(result.Segments[0].Offset == 4);
@@ -105,7 +105,7 @@ namespace Diff.Core.Tests
             var left = GetTestSample("AAAAA");
             var right = GetTestSample("BBBBB");
 
-            var result = _diffManager.GenerateDiff(left, right);
+            var result = _diffAnalyzer.GenerateDiff(left, right);
 
             Assert.IsTrue(result.Segments.Count == 1);
             Assert.IsTrue(result.Segments[0].Offset == 0);
@@ -118,7 +118,7 @@ namespace Diff.Core.Tests
             var left = GetTestSample("AFirstANameA");
             var right = GetTestSample("BFirstBNameB");
 
-            var result = _diffManager.GenerateDiff(left, right);
+            var result = _diffAnalyzer.GenerateDiff(left, right);
 
             Assert.IsTrue(result.Segments.Count == 3);
             Assert.IsTrue(result.Segments[0].Offset == 0);
@@ -135,7 +135,7 @@ namespace Diff.Core.Tests
             var left = GetTestSample("AAAFirstAANameAAAAA");
             var right = GetTestSample("BBBFirstBBNameBBBBB");
 
-            var result = _diffManager.GenerateDiff(left, right);
+            var result = _diffAnalyzer.GenerateDiff(left, right);
 
             Assert.IsTrue(result.Segments.Count == 3);
             Assert.IsTrue(result.Segments[0].Offset == 0);

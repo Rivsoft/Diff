@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Diff.Data.Models
@@ -12,7 +13,10 @@ namespace Diff.Data.Models
         public Guid Id { get; set; }
         public byte[] Left { get; set; }
         public byte[] Right { get; set; }
-        //public bool AreEqualSize { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+
         public ICollection<DiffSegment> Segments { get; } = new List<DiffSegment>();
         public bool Analyzed { get; set; }
     }

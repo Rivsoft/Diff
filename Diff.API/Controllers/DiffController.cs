@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Diff.API.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("/v1/[controller]")]
     [ApiController]
     public class DiffController : ControllerBase
     {
