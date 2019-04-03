@@ -1,8 +1,6 @@
 ﻿using Diff.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Diff.Data.Repositories
@@ -22,7 +20,7 @@ namespace Diff.Data.Repositories
         /// <param name="analysis">The diff analysis to be added</param>
         public void Add(DiffAnalysis analysis)
         {
-            _context.Add(analysis);
+            _context.DiffAnalysis.Add(analysis);
         }
 
         /// <summary>

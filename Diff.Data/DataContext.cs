@@ -15,6 +15,6 @@ namespace Diff.Data
             //modelBuilder.ApplyConfiguration(new DiffAnalysisConfiguration());
         }
 
-        public DbSet<DiffAnalysis> DiffAnalysis { get; set; }
+        public virtual DbSet<DiffAnalysis> DiffAnalysis { get; set; }
     }
 }

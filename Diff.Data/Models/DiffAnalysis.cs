@@ -17,7 +17,7 @@ namespace Diff.Data.Models
         [Timestamp]
         public byte[] RowVersion { get; set; }
 
-        public ICollection<DiffSegment> Segments { get; } = new List<DiffSegment>();
+        public ICollection<DiffSegment> Segments { get; set; } = new List<DiffSegment>();
         public bool Analyzed { get; set; }
     }
 }

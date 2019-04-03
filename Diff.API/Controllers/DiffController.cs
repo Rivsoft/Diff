@@ -53,6 +53,14 @@ namespace Diff.API.Controllers
             return Accepted(uri);
         }
 
+        /// <summary>
+        /// Returns a diff analysis.
+        /// </summary>
+        /// <param name="id">The <see cref="Guid"/> of the analysis to be retrieved</param>
+        /// <returns>
+        ///     A <see cref="GetDiffAnalysisForResultDTO"/> model (in JSON format) representing the analized data. 
+        ///     If the <see cref="GetDiffAnalysisForResultDTO.Analyzed"/> atribute is false it means the analysis has not been completed yet.
+        /// </returns>
         [HttpGet("{id}", Name = "GetDiffResult")]
         public async Task<IActionResult> GetDiffResult(Guid id)
         {

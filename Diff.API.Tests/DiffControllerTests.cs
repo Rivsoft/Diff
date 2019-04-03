@@ -41,7 +41,7 @@ namespace Diff.API.Tests
             // Mock the Url property of the controller
             var mockUrlHelper = new Mock<IUrlHelper>();
             mockUrlHelper.Setup(x => x.RouteUrl(It.IsAny<UrlRouteContext>()))
-                .Returns("/api/v1/diff/route");
+                .Returns("/v1/diff/");
 
             // Initialize the diff controller used on all tests
             _diffController = new DiffController(mockedBus.Object, mockedMapper.Object, mockedDiffRepo.Object)
@@ -114,7 +114,39 @@ namespace Diff.API.Tests
         {
             var guid = Guid.NewGuid();
             var input = Convert.ToBase64String(Encoding.UTF8.GetBytes("TestString"));
-            var result = await _diffController.AddLeft(guid, input) as AcceptedResult;
+            var result = await _diffController.AddRight(guid, input) as AcceptedResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(202, result.StatusCode);
+        }
+        #endregion
+
+        #region AddRight action tests
+        [TestMethod]
+        public async Task AddRight_Should_ReturnBadRequest_When_NullInput()
+        {
+            var result = await _diffController.AddRight(Guid.Empty, null) as BadRequestResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(400, result.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task AddRight_Should_ReturnBadRequest_When_NonBase64Input()
+        {
+            var guid = Guid.NewGuid();
+            var result = await _diffController.AddRight(guid, "Test!") as BadRequestResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(400, result.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task AddRight_Should_ReturnAccepted_When_ValidInput()
+        {
+            var guid = Guid.NewGuid();
+            var input = Convert.ToBase64String(Encoding.UTF8.GetBytes("TestString"));
+            var result = await _diffController.AddRight(guid, input) as AcceptedResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(202, result.StatusCode);

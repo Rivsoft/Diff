@@ -12,22 +12,18 @@ namespace Diff.API.Integration.Tests
     [TestClass]
     public class DiffControllerTests
     {
-        private readonly WebApplicationFactory<Startup> _factory;
+        private WebApplicationFactory<Startup> _factory;
         private Guid _guid;
-
-        public DiffControllerTests()
-        {
-            _factory = new WebApplicationFactory<Startup>();
-        }
 
         [TestInitialize]
         public void TestInitialize()
         {
+            _factory = new WebApplicationFactory<Startup>();
             _guid = Guid.NewGuid();
         }
 
         [TestMethod]
-        public async Task Should_ReturnSuccessfulAnalysis_When_PostingDistinctDiffArguments()
+        public async Task Should_ReturnAreEqual_When_PostingEqualDiffArguments()
         {
             var client = _factory.CreateClient();
 
@@ -40,12 +36,75 @@ namespace Diff.API.Integration.Tests
             Assert.IsTrue(leftResponse.StatusCode == HttpStatusCode.Accepted);
             Assert.IsTrue(rightResponse.StatusCode == HttpStatusCode.Accepted);
 
-            await Task.Delay(1000);
+            var analysis = await GetDiffAnalysis(client, _guid);
+
+            Assert.IsTrue(analysis.Id == _guid);
+            Assert.IsTrue(analysis.Analyzed);
+            Assert.IsTrue(analysis.AreEqual);
+            Assert.IsTrue(analysis.AreEqualSize);
+        }
+
+        [TestMethod]
+        public async Task Should_ReturnAreEqualFalse_When_PostingDistinctDiffArguments()
+        {
+            var client = _factory.CreateClient();
+
+            var leftContent = "ew0KICAgICJuYW1lIjogIkpvaG4iLA0KICAgICJhZ2UiOiAzNSwNCiAgICAiY2FyIjogIlZvbHZvIg0KfQ==";
+            var rightContent = "ew0KICAgICJuYW1lIjogIkthcmwiLA0KICAgICJhZ2UiOiAzMiwNCiAgICAiY2FyIjogIk1hemRhIg0KfQ==";
+
+            var leftResponse = await PostLeftDiffArgument(client, _guid, leftContent);
+            var rightResponse = await PostRightDiffArgument(client, _guid, rightContent);
+
+            Assert.IsTrue(leftResponse.StatusCode == HttpStatusCode.Accepted);
+            Assert.IsTrue(rightResponse.StatusCode == HttpStatusCode.Accepted);
 
             var analysis = await GetDiffAnalysis(client, _guid);
 
             Assert.IsTrue(analysis.Id == _guid);
-            Assert.IsTrue(analysis.AreEqual);
+            Assert.IsTrue(analysis.Analyzed);
+            Assert.IsFalse(analysis.AreEqual);
+            Assert.IsTrue(analysis.AreEqualSize);
+            Assert.IsTrue(analysis.Segments.Length == 3);
+        }
+
+        [TestMethod]
+        public async Task Should_ReturnAreEqualSizeFalse_When_PostingNotEqualSizeDiffArguments()
+        {
+            var client = _factory.CreateClient();
+
+            var leftContent = "ew0KICAgICJuYW1lIjogIkpvaG4iLA0KICAgICJhZ2UiOiAzNSwNCiAgICAiY2FyIjogIlZvbHZvIg0KfQ==";
+            var rightContent = "ew0KICAgICJuYW1lIjogIk1hcmlhbm8iLA0KICAgICJhZ2UiOiAzNywNCiAgICAiY2FyIjogIkZpYXQiDQp9";
+
+            var leftResponse = await PostLeftDiffArgument(client, _guid, leftContent);
+            var rightResponse = await PostRightDiffArgument(client, _guid, rightContent);
+
+            Assert.IsTrue(leftResponse.StatusCode == HttpStatusCode.Accepted);
+            Assert.IsTrue(rightResponse.StatusCode == HttpStatusCode.Accepted);
+
+            var analysis = await GetDiffAnalysis(client, _guid);
+
+            Assert.IsTrue(analysis.Id == _guid);
+            Assert.IsTrue(analysis.Analyzed);
+            Assert.IsFalse(analysis.AreEqual);
+            Assert.IsFalse(analysis.AreEqualSize);
+            Assert.IsTrue(analysis.Segments.Length == 0);
+        }
+
+        [TestMethod]
+        public async Task Should_ReturnNotAnalized_When_PostingOnlyOneDiffArgument()
+        {
+            var client = _factory.CreateClient();
+
+            var leftContent = "ew0KICAgICJuYW1lIjogIkpvaG4iLA0KICAgICJhZ2UiOiAzNSwNCiAgICAiY2FyIjogIlZvbHZvIg0KfQ==";
+
+            var leftResponse = await PostLeftDiffArgument(client, _guid, leftContent);
+
+            Assert.IsTrue(leftResponse.StatusCode == HttpStatusCode.Accepted);
+
+            var analysis = await GetDiffAnalysis(client, _guid);
+
+            Assert.IsTrue(analysis.Id == _guid);
+            Assert.IsFalse(analysis.Analyzed);
         }
 
         [TestMethod]
@@ -82,6 +141,8 @@ namespace Diff.API.Integration.Tests
 
         private async Task<DTOs.GetDiffAnalysisForResultDTO> GetDiffAnalysis(HttpClient client, Guid id)
         {
+            await Task.Delay(5000);
+
             var endpoint = $"/v1/diff/{id}";
             var response = await client.GetAsync(endpoint);
 
